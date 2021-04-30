@@ -21,9 +21,9 @@ TFT_eSprite Display = TFT_eSprite(&tft);  // Create Sprite object "img" with poi
 unsigned long CurTime;
  
 uint16_t TheColor;
-// start with some initial colors
-uint16_t MinTemp = 25;
-uint16_t MaxTemp = 35;
+//**** start with some initial colors
+uint16_t MinTemp = 20;
+uint16_t MaxTemp = 23;
  
 // variables for interpolated colors
 byte red, green, blue;
@@ -127,7 +127,7 @@ void loop() {
   CurTime = millis();
  
   // draw a large white border for the temperature area
-  Display.fillRect(10, 10, 220, 220, TFT_WHITE);
+ // Display.fillRect(10, 10, 220, 220, TFT_WHITE);
  
   // read the sensor
   ThermalSensor.read_pixel_temperature(pixels);
@@ -151,8 +151,8 @@ void loop() {
       val = (intPoint * incr ) +  pixels[aLow];
       // store in the 70 x 70 array
       // since display is pointing away, reverse row to transpose row data
-      HDTemp[ (7 - row) * 10][col] = val;
- 
+      //HDTemp[ (7 - row) * 10][col] = val;
+      HDTemp[  (7 - row) * 10 ][(70 - col)] = val;
     }
   }
  
@@ -176,6 +176,7 @@ void loop() {
       val = (intPoint * incr ) +  HDTemp[aLow][col];
       // store in the 70 x 70 array
       HDTemp[ row ][col] = val;
+      // HDTemp[ (7 - row) * 10][col] = val;
     }
   }
  
@@ -183,10 +184,10 @@ void loop() {
   //display the 70 x 70 array
   DisplayGradient();
  
-  //Crosshair in the middle of the screen
-  Display.drawCircle(115, 115, 5, TFT_WHITE);
-  Display.drawFastVLine(115, 105, 20, TFT_WHITE);
-  Display.drawFastHLine(105, 115, 20, TFT_WHITE);
+  //**** Crosshair in the middle of the screen
+  Display.drawCircle(115, 115, 50, TFT_WHITE);
+  Display.drawFastVLine(115, 55, 120, TFT_WHITE);
+  Display.drawFastHLine(55, 115, 120, TFT_WHITE);
  
   //Push the Sprite to the screen
   Display.pushSprite(0, 0);
@@ -222,7 +223,7 @@ void DisplayGradient() {
         BoxWidth = 3;
       }
     }
-    // then rip through each 70 cols
+    //**** then rip through each 70 cols
     for (col = 0; col < 70; col++) {
  
       // fast way to draw a non-flicker grid--just make every 10 pixels 2x2 as opposed to 3x3
@@ -238,6 +239,7 @@ void DisplayGradient() {
         }
       }
       // finally we can draw each the 70 x 70 points, note the call to get interpolated color
+     // Display.fillRect((row * 3) + 15, (col * 3) + 15, BoxWidth, BoxHeight, GetColor(HDTemp[row][col]));
       Display.fillRect((row * 3) + 15, (col * 3) + 15, BoxWidth, BoxHeight, GetColor(HDTemp[row][col]));
     }
   }
